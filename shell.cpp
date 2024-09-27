@@ -95,14 +95,13 @@ void ls_command(const std::string& user, const std::string& log_path, const std:
     log_action(log_path, user, "ls");
 }
 
-// Функция для выполнения команды cd
+// Функция для выполнения команды cd {директория} / сd {}
 void cd_command(const std::string& dir, const std::string& user, const std::string& log_path, std::string& current_dir, const std::string& root_dir) {
     std::string new_path;
 
     // Обработка команды без аргументов
     if (dir.empty()) {
-        // Перейти в корень
-        new_path = root_dir;
+        new_path = root_dir; // Перейти в корень
     } else {
         // Формирование нового пути
         new_path = (std::filesystem::path(current_dir) / dir).string(); // Использование path для правильного формирования пути
@@ -118,13 +117,13 @@ void cd_command(const std::string& dir, const std::string& user, const std::stri
     }
 }
 
-// Функция для выполнения команды echo
+// Функция для выполнения команды echo {сообщение}
 void echo_command(const std::string& message, const std::string& user, const std::string& log_path) {
     std::cout << message << std::endl;
     log_action(log_path, user, "echo " + message);
 }
 
-// Функция для выполнения команды rmdir
+// Функция для выполнения команды rmdir  {директория}
 void rmdir_command(const std::string& dir, const std::string& user, const std::string& log_path, const std::string& current_dir) {
     std::string full_path = current_dir + "/" + dir;
     if (std::filesystem::remove_all(full_path)) {
@@ -134,7 +133,7 @@ void rmdir_command(const std::string& dir, const std::string& user, const std::s
     }
 }
 
-// Функция для выполнения команды uniq
+// Функция для выполнения команды uniq {файл}
 void uniq_command(const std::string& file_path, const std::string& user, const std::string& log_path) {
     std::ifstream input(file_path);
     if (!input) {
@@ -152,7 +151,7 @@ void uniq_command(const std::string& file_path, const std::string& user, const s
     log_action(log_path, user, "uniq " + file_path);
 }
 
-// Функция для выполнения команды exit
+// Функция для выполнения команды exit {}
 void exit_command(const std::string& user, const std::string& log_path) {
     log_action(log_path, user, "exit");
     exit(0);
@@ -175,12 +174,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    //создание корневой директории
-    std::string root_dir = current_dir;
+    std::string root_dir = current_dir; //создание корневой директории
     
     std::string command;
     while (true) {
-        std::cout << username << "@emulator:" << current_dir.substr(39, current_dir.length()) << "$ ";
+        //вывод местоположения пользователя
+        std::cout << username << "@emulator:" << current_dir.substr(39, current_dir.length()) << "$ ";  
+        
         std::getline(std::cin, command);
         
         if (command.substr(0, 2) == "ls") {
