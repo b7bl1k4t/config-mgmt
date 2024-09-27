@@ -80,6 +80,12 @@ std::string extract_tar(const std::string& tar_path) {
             archive_write_finish_entry(extract_ptr);
         }
     }
+     // Освобождение ресурсов
+    archive_read_free(archive_ptr);
+    archive_write_free(extract_ptr);
+    
+    return temp_dir; // Возвращаем путь к временной директории
+}
 
 // Основная функция
 int main(int argc, char* argv[]) {
