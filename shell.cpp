@@ -33,6 +33,54 @@ void log_action(const std::string& log_path, const std::string& user, const std:
     log_file_out.close();
 }
 
+// Функция для извлечения файлов из tar-архива в временную директорию
+std::string extract_tar(const std::string& tar_path) {
+    // Создание временной директории с меткой времени
+    std::string temp_dir = "/tmp/shell_emulator_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
+    std::filesystem::create_directory(temp_dir);
+
+    struct archive* archive_ptr = archive_read_new();
+    struct archive* extract_ptr = archive_write_disk_new();
+    struct archive_entry* entry;
+
+    // Настройка параметров чтения
+    archive_read_support_format_tar(archive_ptr);
+    archive_read_support_filter_all(archive_ptr);
+
+    if (archive_read_open_filename(archive_ptr, tar_path.c_str(), 10240) != ARCHIVE_OK) {
+        std::cerr << "Error opening tar file: " << archive_error_string(archive_ptr) << std::endl;
+        return "";
+    }
+    
+    // Извлечение содержимого архива
+    while (archive_read_next_header(archive_ptr, &entry) == ARCHIVE_OK) {
+        const char* current_file = archive_entry_pathname(entry);
+        
+        // Полный путь для извлечения файла
+        std::string full_path = temp_dir + "/" + current_file;
+        
+        // Создание необходимых директорий
+        std::filesystem::create_directories(std::filesystem::path(full_path).parent_path());
+
+        std::cout << "Extracting: " << full_path << std::endl;
+
+        // Установка прав доступа и информации о файле
+        archive_entry_set_pathname(entry, full_path.c_str());
+        archive_write_disk_set_options(extract_ptr, ARCHIVE_EXTRACT_TIME);
+
+        if (archive_write_header(extract_ptr, entry) == ARCHIVE_OK) {
+            const void* buffer;
+            size_t size;
+            la_int64_t offset;
+
+            // Чтение данных из архива
+            while (archive_read_data_block(archive_ptr, &buffer, &size, &offset) == ARCHIVE_OK) {
+                archive_write_data_block(extract_ptr, buffer, size, offset);
+            }
+            archive_write_finish_entry(extract_ptr);
+        }
+    }
+
 // Основная функция
 int main(int argc, char* argv[]) {
     if (argc < 4) {
