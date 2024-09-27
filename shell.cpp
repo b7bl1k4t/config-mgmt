@@ -96,11 +96,23 @@ void ls_command(const std::string& user, const std::string& log_path, const std:
 }
 
 // Функция для выполнения команды cd
-void cd_command(const std::string& dir, const std::string& user, const std::string& log_path, std::string& current_dir) {
-    std::string new_path = current_dir + "/" + dir;
-    if (std::filesystem::exists(new_path) && std::filesystem::is_directory(new_path)) {
-        current_dir = new_path;
-        log_action(log_path, user, "cd " + dir);
+void cd_command(const std::string& dir, const std::string& user, const std::string& log_path, std::string& current_dir, const std::string& root_dir) {
+    std::string new_path;
+
+    // Обработка команды без аргументов
+    if (dir.empty()) {
+        // Перейти в корень
+        new_path = root_dir;
+    } else {
+        // Формирование нового пути
+        new_path = (std::filesystem::path(current_dir) / dir).string(); // Использование path для правильного формирования пути
+    }
+
+    // Проверка существования нового каталога и что он находится в пределах виртуальной файловой системы
+    if (std::filesystem::exists(new_path) && std::filesystem::is_directory(new_path) &&
+        std::filesystem::equivalent(root_dir, new_path.substr(0, root_dir.length()))) {
+        current_dir = new_path; // Обновляем текущий каталог
+        log_action(log_path, user, "cd " + (dir.empty() ? "~" : dir));
     } else {
         std::cerr << "cd: " << new_path << ": No such file or directory" << std::endl;
     }
