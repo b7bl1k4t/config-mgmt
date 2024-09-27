@@ -87,6 +87,14 @@ std::string extract_tar(const std::string& tar_path) {
     return temp_dir; // Возвращаем путь к временной директории
 }
 
+// Функция для выполнения команды ls
+void ls_command(const std::string& user, const std::string& log_path, const std::string& current_dir) {
+    for (const auto& entry : std::filesystem::directory_iterator(current_dir)) {
+        std::cout << entry.path().filename().string() << std::endl;
+    }
+    log_action(log_path, user, "ls");
+}
+
 // Основная функция
 int main(int argc, char* argv[]) {
     if (argc < 4) {
