@@ -106,6 +106,12 @@ void cd_command(const std::string& dir, const std::string& user, const std::stri
     }
 }
 
+// Функция для выполнения команды echo
+void echo_command(const std::string& message, const std::string& user, const std::string& log_path) {
+    std::cout << message << std::endl;
+    log_action(log_path, user, "echo " + message);
+}
+
 // Основная функция
 int main(int argc, char* argv[]) {
     if (argc < 4) {
