@@ -162,21 +162,29 @@ int main(int argc, char* argv[]) {
     if (current_dir.empty()) {
         return 1;
     }
-
+    
+    //создание корневой директории
+    std::string root_dir = current_dir;
+    
     std::string command;
     while (true) {
-        std::cout << username << "@emulator:" << current_dir << "$ ";
+        std::cout << username << "@emulator:" << current_dir.substr(39, current_dir.length()) << "$ ";
         std::getline(std::cin, command);
         
         if (command.substr(0, 2) == "ls") {
             ls_command(username, log_path, current_dir);
         } else if (command.substr(0, 2) == "cd") {
-            cd_command(command.substr(3), username, log_path, current_dir);
-        } else if (command.substr(0, 4) == "echo") {
+            if (command.length() > 2){
+                cd_command(command.substr(3), username, log_path, current_dir, root_dir);
+            }
+            else {
+                cd_command("", username, log_path, current_dir, root_dir);
+            }
+        } else if (command.substr(0, 4) == "echo" && command.length() > 4) {
             echo_command(command.substr(5), username, log_path);
-        } else if (command.substr(0, 5) == "rmdir") {
+        } else if (command.substr(0, 5) == "rmdir" && command.length() > 5) {
             rmdir_command(command.substr(6), username, log_path, current_dir);
-        } else if (command.substr(0, 4) == "uniq") {
+        } else if (command.substr(0, 4) == "uniq" && command.length() > 4) {
             uniq_command(current_dir + "/" + command.substr(5), username, log_path);
         } else if (command == "exit") {
             exit_command(username, log_path);
