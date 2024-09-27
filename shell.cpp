@@ -122,6 +122,24 @@ void rmdir_command(const std::string& dir, const std::string& user, const std::s
     }
 }
 
+// Функция для выполнения команды uniq
+void uniq_command(const std::string& file_path, const std::string& user, const std::string& log_path) {
+    std::ifstream input(file_path);
+    if (!input) {
+        std::cerr << "uniq: cannot open " << file_path << std::endl;
+        return;
+    }
+
+    std::string prev_line, line;
+    while (std::getline(input, line)) {
+        if (line != prev_line) {
+            std::cout << line << std::endl;
+        }
+        prev_line = line;
+    }
+    log_action(log_path, user, "uniq " + file_path);
+}
+
 // Основная функция
 int main(int argc, char* argv[]) {
     if (argc < 4) {
