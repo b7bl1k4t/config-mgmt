@@ -112,6 +112,16 @@ void echo_command(const std::string& message, const std::string& user, const std
     log_action(log_path, user, "echo " + message);
 }
 
+// Функция для выполнения команды rmdir
+void rmdir_command(const std::string& dir, const std::string& user, const std::string& log_path, const std::string& current_dir) {
+    std::string full_path = current_dir + "/" + dir;
+    if (std::filesystem::remove_all(full_path)) {
+        log_action(log_path, user, "rmdir " + dir);
+    } else {
+        std::cerr << "rmdir: failed to remove " << full_path << std::endl;
+    }
+}
+
 // Основная функция
 int main(int argc, char* argv[]) {
     if (argc < 4) {
