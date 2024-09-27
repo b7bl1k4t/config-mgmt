@@ -163,6 +163,27 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    std::string command;
+    while (true) {
+        std::cout << username << "@emulator:" << current_dir << "$ ";
+        std::getline(std::cin, command);
+        
+        if (command.substr(0, 2) == "ls") {
+            ls_command(username, log_path, current_dir);
+        } else if (command.substr(0, 2) == "cd") {
+            cd_command(command.substr(3), username, log_path, current_dir);
+        } else if (command.substr(0, 4) == "echo") {
+            echo_command(command.substr(5), username, log_path);
+        } else if (command.substr(0, 5) == "rmdir") {
+            rmdir_command(command.substr(6), username, log_path, current_dir);
+        } else if (command.substr(0, 4) == "uniq") {
+            uniq_command(current_dir + "/" + command.substr(5), username, log_path);
+        } else if (command == "exit") {
+            exit_command(username, log_path);
+        } else {
+            std::cerr << command << ": command not found" << std::endl;
+        }
+    }
     
     return 0;
 }
