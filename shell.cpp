@@ -140,6 +140,12 @@ void uniq_command(const std::string& file_path, const std::string& user, const s
     log_action(log_path, user, "uniq " + file_path);
 }
 
+// Функция для выполнения команды exit
+void exit_command(const std::string& user, const std::string& log_path) {
+    log_action(log_path, user, "exit");
+    exit(0);
+}
+
 // Основная функция
 int main(int argc, char* argv[]) {
     if (argc < 4) {
@@ -151,5 +157,12 @@ int main(int argc, char* argv[]) {
     std::string tar_path = argv[2];
     std::string log_path = argv[3];
 
+    // Извлечение файлов из tar-архива в временную директорию
+    std::string current_dir = extract_tar(tar_path);
+    if (current_dir.empty()) {
+        return 1;
+    }
+
+    
     return 0;
 }
