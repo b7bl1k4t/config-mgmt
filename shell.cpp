@@ -95,6 +95,17 @@ void ls_command(const std::string& user, const std::string& log_path, const std:
     log_action(log_path, user, "ls");
 }
 
+// Функция для выполнения команды cd
+void cd_command(const std::string& dir, const std::string& user, const std::string& log_path, std::string& current_dir) {
+    std::string new_path = current_dir + "/" + dir;
+    if (std::filesystem::exists(new_path) && std::filesystem::is_directory(new_path)) {
+        current_dir = new_path;
+        log_action(log_path, user, "cd " + dir);
+    } else {
+        std::cerr << "cd: " << new_path << ": No such file or directory" << std::endl;
+    }
+}
+
 // Основная функция
 int main(int argc, char* argv[]) {
     if (argc < 4) {
